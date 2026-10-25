@@ -150,8 +150,10 @@
                !window.KOTAK_SURAT_SUPABASE_ANON_KEY ||
                window.KOTAK_SURAT_SUPABASE_ANON_KEY.includes("YOUR_SUPABASE_PUBLISHABLE_KEY") ||
                !window.KOTAK_SURAT_ADMIN_USERNAME ||
-               !window.KOTAK_SURAT_ADMIN_EMAIL ||
-               window.KOTAK_SURAT_ADMIN_EMAIL.includes("ISI_EMAIL_ADMIN_SUPABASE")) {
+               !Array.isArray(window.KOTAK_SURAT_ADMIN_EMAILS) ||
+               window.KOTAK_SURAT_ADMIN_EMAILS.length === 0 ||
+               window.KOTAK_SURAT_ADMIN_EMAILS.some((email) =>
+                 typeof email !== "string" || !email.includes("@"))) {
       status.textContent = "Konfigurasi Supabase atau akun admin belum diisi di supabase-config.js.";
     } else {
       try {
@@ -176,16 +178,18 @@
       const formData = new FormData(event.currentTarget);
       const loginIdentifier = formData.get("username").trim();
       const password = formData.get("password");
+      const adminEmails = window.KOTAK_SURAT_ADMIN_EMAILS;
+      const selectedEmail = loginIdentifier.toLowerCase() === window.KOTAK_SURAT_ADMIN_USERNAME.toLowerCase()
+        ? adminEmails[0]
+        : adminEmails.find((email) => email.toLowerCase() === loginIdentifier.toLowerCase());
       loginButton.disabled = true;
       status.textContent = "Memeriksa akun...";
       try {
-        const isUsername = loginIdentifier.toLowerCase() === window.KOTAK_SURAT_ADMIN_USERNAME.toLowerCase();
-        const isEmail = loginIdentifier.toLowerCase() === window.KOTAK_SURAT_ADMIN_EMAIL.toLowerCase();
-        if (!isUsername && !isEmail) {
+        if (!selectedEmail) {
           throw new Error("Username atau password salah.");
         }
         const { error } = await supabaseClient.auth.signInWithPassword({
-          email: window.KOTAK_SURAT_ADMIN_EMAIL,
+          email: selectedEmail,
           password
         });
         if (error) throw error;
