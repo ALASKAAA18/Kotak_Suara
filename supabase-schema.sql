@@ -24,11 +24,22 @@ create policy "Admins can read letters"
   on public.letters
   for select
   to authenticated
-  using ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
+  using (
+    lower(auth.jwt() ->> 'email') in (
+      'asadekaalaska@gmail.com',
+      'fajarhidayat130310@gmail.com'
+    )
+  );
 
 drop policy if exists "Admins can delete letters" on public.letters;
 create policy "Admins can delete letters"
   on public.letters
   for delete
   to authenticated
-  using ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
+  using (
+    lower(auth.jwt() ->> 'email') in (
+      'asadekaalaska@gmail.com',
+      'fajarhidayat130310@gmail.com'
+    )
+  );
+
