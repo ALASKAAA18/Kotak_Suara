@@ -15,12 +15,7 @@
       min-height: 100vh;
       margin: 0;
       color: #252525;
-      background-color: #fff;
-      background-image: url("BG.png");
-      background-position: center center;
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
+      background: url("BG.png") center center / cover no-repeat fixed;
       font-family: "Segoe UI", Arial, sans-serif;
     }
 
@@ -89,7 +84,6 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
-      width: 100%;
     }
 
     .main-logo {
@@ -130,42 +124,18 @@
       outline-offset: 4px;
     }
 
-    /* Tampilan HP */
     @media (max-width: 480px) {
-      body {
-        background-attachment: scroll;
-        background-size: 100% 100%;
-        background-position: center top;
-        background-repeat: no-repeat;
-        background-color: #fff;
-      }
-
       .topbar {
         min-height: 76px;
-        padding: 12px 20px;
+      }
+
+      main {
+        min-height: calc(100vh - 76px);
       }
 
       .header-logo {
         width: 44px;
         height: 44px;
-      }
-
-      main {
-        min-height: calc(100vh - 76px);
-        padding: 32px 16px;
-      }
-
-      .main-logo {
-        width: clamp(180px, 55vw, 220px);
-      }
-
-      h1 {
-        font-size: clamp(30px, 8vw, 38px);
-      }
-
-      .cta {
-        padding: 13px 24px;
-        font-size: 15px;
       }
     }
 
