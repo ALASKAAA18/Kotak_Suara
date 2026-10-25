@@ -1,175 +1,52 @@
-<!doctype html>
-<html lang="id">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ayo Buat Suratmu</title>
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  color: #252525;
+  background-color: #fff;
+  background-image: url("BG.png");
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+/* Tampilan HP portrait */
+@media (max-width: 480px) {
+  body {
+    background-attachment: scroll;
+    background-size: auto 100vh;
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-color: #fff;
+  }
 
-    body {
-      min-width: 320px;
-      min-height: 100vh;
-      margin: 0;
-      color: #252525;
-      background: url("BG.png") center center / cover no-repeat fixed;
-      font-family: "Segoe UI", Arial, sans-serif;
-    }
+  .topbar {
+    min-height: 76px;
+    padding: 12px 20px;
+  }
 
-    .topbar {
-      display: flex;
-      min-height: 88px;
-      align-items: center;
-      padding: 14px clamp(20px, 6vw, 80px);
-      background: #f8ca32;
-    }
+  .header-logo {
+    width: 44px;
+    height: 44px;
+  }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+  main {
+    min-height: calc(100vh - 76px);
+    padding: 32px 16px;
+  }
 
-    .logo {
-      display: grid;
-      flex: 0 0 auto;
-      place-items: center;
-      overflow: hidden;
-      background: #fff9e6;
-    }
+  .main-logo {
+    width: clamp(180px, 55vw, 220px);
+  }
 
-    .header-logo {
-      width: 50px;
-      height: 50px;
-      border: 2px solid #9d7b12;
-      border-radius: 50%;
-    }
+  h1 {
+    font-size: clamp(30px, 8vw, 38px);
+  }
 
-    .header-logo img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      padding: 3px;
-      object-fit: contain;
-    }
-
-    .logo-link {
-      display: block;
-      border-radius: 50%;
-    }
-
-    .logo-link:focus-visible {
-      outline: 3px solid #252525;
-      outline-offset: 4px;
-    }
-
-    .brand-name {
-      font-size: 16px;
-      font-weight: 800;
-      letter-spacing: .04em;
-    }
-
-    main {
-      display: grid;
-      min-height: calc(100vh - 88px);
-      padding: 48px 24px;
-      place-items: center;
-    }
-
-    .hero {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-
-    .main-logo {
-      display: block;
-      width: clamp(180px, 35vw, 240px);
-      aspect-ratio: 1;
-      object-fit: contain;
-    }
-
-    h1 {
-      margin: 26px 0 0;
-      font-size: clamp(32px, 7vw, 48px);
-      font-weight: 800;
-      letter-spacing: -.04em;
-    }
-
-    .cta {
-      display: inline-block;
-      margin-top: 24px;
-      padding: 14px 28px;
-      border: 2px solid #e4b51b;
-      border-radius: 12px;
-      background: #f8ca32;
-      color: #252525;
-      font-size: 16px;
-      font-weight: 700;
-      text-decoration: none;
-      transition: background-color .2s ease, transform .2s ease;
-    }
-
-    .cta:hover {
-      transform: translateY(-2px);
-      background: #f4bf1c;
-    }
-
-    .cta:focus-visible {
-      outline: 3px solid #252525;
-      outline-offset: 4px;
-    }
-
-    @media (max-width: 480px) {
-      .topbar {
-        min-height: 76px;
-      }
-
-      main {
-        min-height: calc(100vh - 76px);
-      }
-
-      .header-logo {
-        width: 44px;
-        height: 44px;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        transition-duration: .01ms !important;
-      }
-    }
-  </style>
-</head>
-
-<body>
-  <header class="topbar">
-    <div class="brand">
-      <a class="logo-link" href="Login.html" aria-label="Ke halaman login">
-        <span class="logo header-logo" aria-hidden="true">
-          <img src="asadeka%20logo.jpeg" alt="">
-        </span>
-      </a>
-
-      <span class="brand-name">KOTAK SURAT</span>
-    </div>
-  </header>
-
-  <main>
-    <section class="hero" aria-labelledby="page-title">
-      <img class="main-logo" src="LOGOS.png" alt="Logo kotak surat">
-
-      <h1 id="page-title">
-        <a class="cta" href="Surat.html">ayo buat suratmu</a>
-      </h1>
-    </section>
-  </main>
-</body>
-</html>
+  .cta {
+    padding: 13px 24px;
+    font-size: 15px;
+  }
+}
