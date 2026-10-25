@@ -103,8 +103,18 @@
       white-space: pre-wrap;
     }
 
-    .letter-card .delete-button {
+    .letter-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
       margin-top: 8px;
+    }
+
+    .letter-card .download-button {
+      background: #e5edcf;
+    }
+
+    .letter-card .delete-button {
       background: #f2d3cd;
     }
 
@@ -214,6 +224,15 @@
         message.className = "letter-message";
         message.textContent = letter.message;
 
+        const actions = document.createElement("div");
+        actions.className = "letter-actions";
+
+        const downloadButton = document.createElement("button");
+        downloadButton.className = "download-button";
+        downloadButton.type = "button";
+        downloadButton.textContent = "Unduh surat (.txt)";
+        downloadButton.addEventListener("click", () => downloadLetter(letter));
+
         const deleteButton = document.createElement("button");
         deleteButton.className = "delete-button";
         deleteButton.type = "button";
@@ -221,9 +240,37 @@
         deleteButton.addEventListener("click", () => deleteLetter(letter.id));
 
         details.append(summary, message);
-        card.append(heading, metadata, details, deleteButton);
+        actions.append(downloadButton, deleteButton);
+        card.append(heading, metadata, details, actions);
         letterList.append(card);
       }
+    }
+
+    function downloadLetter(letter) {
+      const sentAt = letter.sent_at
+        ? new Date(letter.sent_at).toLocaleString("id-ID")
+        : "Tidak tersedia";
+      const content = [
+        `Untuk: ${letter.recipient}`,
+        `Dari: ${letter.sender}`,
+        `Tanggal: ${sentAt}`,
+        "",
+        letter.message
+      ].join("\r\n");
+      const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      const filename = `surat-${letter.sender}-${letter.recipient}`
+        .replace(/[<>:"/\\|?*\u0000-\u001f]/g, "-")
+        .replace(/\s+/g, "-")
+        .slice(0, 100);
+
+      link.href = url;
+      link.download = `${filename || "surat"}.txt`;
+      document.body.append(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
     async function deleteLetter(letterId) {
