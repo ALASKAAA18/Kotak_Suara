@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Ayo Buat Suratmu</title>
+
   <style>
     * {
       box-sizing: border-box;
@@ -14,7 +15,7 @@
       min-height: 100vh;
       margin: 0;
       color: #252525;
-      background: #fff;
+      background: url("BG.png") center center / cover no-repeat fixed;
       font-family: "Segoe UI", Arial, sans-serif;
     }
 
@@ -87,10 +88,9 @@
 
     .main-logo {
       display: block;
-      width: clamp(170px, 34vw, 230px);
+      width: clamp(180px, 35vw, 240px);
       aspect-ratio: 1;
       object-fit: contain;
-      mix-blend-mode: multiply;
     }
 
     h1 {
@@ -148,6 +148,7 @@
     }
   </style>
 </head>
+
 <body>
   <header class="topbar">
     <div class="brand">
@@ -156,13 +157,15 @@
           <img src="asadeka%20logo.jpeg" alt="">
         </span>
       </a>
+
       <span class="brand-name">KOTAK SURAT</span>
     </div>
   </header>
 
   <main>
     <section class="hero" aria-labelledby="page-title">
-      <img class="main-logo" src="Kotak.jpeg" alt="Logo kotak surat">
+      <img class="main-logo" src="LOGOS.png" alt="Logo kotak surat">
+
       <h1 id="page-title">
         <a class="cta" href="Surat.html">ayo buat suratmu</a>
       </h1>
