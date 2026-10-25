@@ -84,25 +84,27 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
+      transform: translateY(-16px);
     }
 
     .main-logo {
       display: block;
-      width: clamp(180px, 35vw, 240px);
+      width: 250px;
       aspect-ratio: 1;
       object-fit: contain;
     }
 
     h1 {
-      margin: 26px 0 0;
+      margin: 0;
       font-size: clamp(32px, 7vw, 48px);
       font-weight: 800;
       letter-spacing: -.04em;
+      transform: translateY(-24px);
     }
 
     .cta {
       display: inline-block;
-      margin-top: 24px;
+      margin-top: 0;
       padding: 14px 28px;
       border: 2px solid #e4b51b;
       border-radius: 12px;
@@ -122,6 +124,25 @@
     .cta:focus-visible {
       outline: 3px solid #252525;
       outline-offset: 4px;
+    }
+
+    .hero-description {
+      max-width: 520px;
+      margin: 12px 0 0;
+      color: #493d20;
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: .01em;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 600px) and (orientation: portrait) {
+      body {
+        background-position: center top;
+        background-size: cover;
+        background-attachment: scroll;
+      }
     }
 
     @media (max-width: 480px) {
@@ -158,7 +179,7 @@
         </span>
       </a>
 
-      <span class="brand-name">KOTAK SURAT</span>
+      <span class="brand-name">Kotak saran &amp; aspirasi</span>
     </div>
   </header>
 
@@ -169,6 +190,7 @@
       <h1 id="page-title">
         <a class="cta" href="Surat.html">ayo buat suratmu</a>
       </h1>
+      <p class="hero-description">Mari sampaikan saran ✏️, kritik 💬, atau aspirasi 🌟 kamu untuk kemajuan bersama!</p>
     </section>
   </main>
 </body>
