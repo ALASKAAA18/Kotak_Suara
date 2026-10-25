@@ -13,17 +13,9 @@ Kunci anon/publishable memang dipakai di browser. Keamanan isi surat tetap berga
 
 ## 2. Buat akun admin
 
-1. Di Supabase, buka **Authentication → Users → Add user**, lalu buat akun admin menggunakan email dan password.
-2. Buka detail akun tersebut dan ubah **app_metadata** menjadi:
-
-   ```json
-   {
-     "role": "admin"
-   }
-   ```
-
-   Pastikan mengubah `app_metadata`, bukan `user_metadata`; pengguna tidak boleh dapat memberi dirinya sendiri hak admin.
-3. Gunakan email dan password tersebut di `Login.html`. Tidak ada lagi username/password admin yang tertanam di kode.
+1. Di Supabase, buka **Authentication → Users → Add user**, lalu buat akun untuk `asadekaalaska@gmail.com` dan `fajarhidayat130310@gmail.com`, masing-masing dengan password Supabase sendiri.
+2. Kebijakan di `supabase-schema.sql` memberi akses baca dan hapus hanya kepada dua alamat email tersebut. Setelah perubahan kebijakan dijalankan, logout lalu login kembali agar sesi diperbarui.
+3. Username `EvBang` masuk ke akun email pertama (`asadekaalaska@gmail.com`). Email mana pun dari dua alamat tersebut juga bisa dipakai langsung sebagai ID login. Jangan simpan password di konfigurasi.
 
 ## 3. Host dan uji
 
