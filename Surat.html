@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Buat Surat</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 32px 20px 56px;
+      background: #f7f7f7;
+      color: #252525;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    main {
+      width: min(100%, 760px);
+      margin: 0 auto;
+    }
+
+    a {
+      color: #795d00;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    h1 {
+      margin: 28px 0 20px;
+      font-size: clamp(32px, 7vw, 44px);
+    }
+
+    .paper {
+      display: flex;
+      min-height: min(680px, 72vh);
+      flex-direction: column;
+      padding: clamp(24px, 6vw, 56px);
+      border: 1px solid #e8e1d2;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 16px 44px rgb(40 34 18 / 10%);
+    }
+
+    .field {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    label {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 0;
+      border-bottom: 1px solid #ded8ca;
+      border-radius: 0;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+    }
+
+    input {
+      min-height: 38px;
+      padding: 6px 2px;
+    }
+
+    textarea {
+      min-height: 260px;
+      flex: 1;
+      padding: 12px 2px;
+      line-height: 1.8;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-bottom-color: #b28a0d;
+      outline: none;
+    }
+
+    .message-field {
+      display: flex;
+      min-height: 0;
+      flex: 1;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 24px;
+    }
+
+    .from-field {
+      width: min(100%, 300px);
+      margin-top: 28px;
+      align-self: flex-end;
+    }
+
+    .send-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 24px;
+    }
+
+    .send-button {
+      display: inline-flex;
+      min-width: 150px;
+      min-height: 50px;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 12px 24px;
+      border: 0;
+      border-radius: 12px;
+      background: #f8ca32;
+      color: #252525;
+      font: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color .2s ease, transform .2s ease;
+    }
+
+    .send-button:hover {
+      transform: translateY(-2px);
+      background: #f4bf1c;
+    }
+
+    .send-button:disabled {
+      transform: none;
+      background: #dedbd1;
+      color: #777;
+      cursor: not-allowed;
+    }
+
+    .send-button:focus-visible {
+      outline: 3px solid #252525;
+      outline-offset: 4px;
+    }
+
+    .send-button svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .send-status {
+      min-height: 22px;
+      margin: 10px 0 0;
+      color: #795d00;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 24px 14px 40px;
+      }
+
+      .paper {
+        min-height: 70vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <a href="Homepage.html">← Kembali ke halaman utama</a>
+    <h1>Buat Surat</h1>
+    <form class="paper" id="letter-form" aria-label="Formulir pesan">
+      <div class="field">
+        <label for="recipient">To:</label>
+        <input id="recipient" name="recipient" type="text" maxlength="200" placeholder="Nama penerima" required>
+      </div>
+      <div class="message-field">
+        <label for="message">Message:</label>
+        <textarea id="message" name="message" maxlength="10000" placeholder="Tulis pesan atau kesanmu di sini..." required></textarea>
+      </div>
+      <div class="field from-field">
+        <label for="sender">From:</label>
+        <input id="sender" name="sender" type="text" maxlength="200" placeholder="Namamu" required>
+      </div>
+    </form>
+    <div class="send-area">
+      <button class="send-button" id="send-button" type="submit" form="letter-form" disabled>
+        Kirim
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <p class="send-status" id="send-status" role="status" aria-live="polite"></p>
+    </div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    const letterForm = document.getElementById("letter-form");
+    const sendButton = document.getElementById("send-button");
+    const sendStatus = document.getElementById("send-status");
+    const letterFields = letterForm.querySelectorAll("input, textarea");
+    const supabaseClient = window.supabase.createClient(
+      window.KOTAK_SURAT_SUPABASE_URL,
+      window.KOTAK_SURAT_SUPABASE_ANON_KEY
+    );
+
+    function updateSendButton() {
+      const isComplete = Array.from(letterFields).every((field) => field.value.trim().length > 0);
+      sendButton.disabled = !isComplete;
+      if (!isComplete) {
+        sendStatus.textContent = "Lengkapi To, Message, dan From untuk mengirim surat.";
+      } else {
+        sendStatus.textContent = "";
+      }
+    }
+
+    letterForm.addEventListener("input", updateSendButton);
+    letterForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      updateSendButton();
+      if (sendButton.disabled) return;
+
+      const formData = new FormData(letterForm);
+      const letter = {
+        recipient: formData.get("recipient").trim(),
+        message: formData.get("message").trim(),
+        sender: formData.get("sender").trim()
+      };
+
+      sendButton.disabled = true;
+      sendStatus.textContent = "Mengirim surat...";
+      try {
+        const { error } = await supabaseClient.from("letters").insert(letter);
+        if (error) {
+          throw error;
+        }
+
+        letterForm.reset();
+        updateSendButton();
+        sendStatus.textContent = "Surat sudah terkirim dan masuk ke kotak surat.";
+      } catch (error) {
+        sendButton.disabled = false;
+        sendStatus.textContent = "Surat gagal dikirim. Periksa koneksi atau konfigurasi Supabase.";
+        console.error("Gagal menyimpan surat:", error);
+      }
+    });
+
+    updateSendButton();
+  </script>
+</body>
+</html>
