@@ -207,15 +207,34 @@
     const sendButton = document.getElementById("send-button");
     const sendStatus = document.getElementById("send-status");
     const letterFields = letterForm.querySelectorAll("input, textarea");
-    const supabaseClient = window.supabase.createClient(
-      window.KOTAK_SURAT_SUPABASE_URL,
-      window.KOTAK_SURAT_SUPABASE_ANON_KEY
-    );
+    let supabaseClient = null;
+    let setupError = "";
+
+    if (!window.supabase || typeof window.supabase.createClient !== "function") {
+      setupError = "Library Supabase gagal dimuat. Periksa koneksi internet atau pemblokir CDN.";
+    } else if (!window.KOTAK_SURAT_SUPABASE_URL ||
+               window.KOTAK_SURAT_SUPABASE_URL.includes("YOUR_PROJECT_ID") ||
+               !window.KOTAK_SURAT_SUPABASE_ANON_KEY ||
+               window.KOTAK_SURAT_SUPABASE_ANON_KEY.includes("YOUR_SUPABASE_PUBLISHABLE_KEY")) {
+      setupError = "Supabase belum dikonfigurasi. Isi Project URL dan publishable/anon key di supabase-config.js.";
+    } else {
+      try {
+        supabaseClient = window.supabase.createClient(
+          window.KOTAK_SURAT_SUPABASE_URL,
+          window.KOTAK_SURAT_SUPABASE_ANON_KEY
+        );
+      } catch (error) {
+        setupError = "Konfigurasi Supabase tidak valid. Periksa Project URL dan publishable/anon key.";
+        console.error("Konfigurasi Supabase tidak valid:", error);
+      }
+    }
 
     function updateSendButton() {
       const isComplete = Array.from(letterFields).every((field) => field.value.trim().length > 0);
-      sendButton.disabled = !isComplete;
-      if (!isComplete) {
+      sendButton.disabled = !isComplete || !supabaseClient;
+      if (setupError) {
+        sendStatus.textContent = setupError;
+      } else if (!isComplete) {
         sendStatus.textContent = "Lengkapi To, Message, dan From untuk mengirim surat.";
       } else {
         sendStatus.textContent = "";
@@ -226,7 +245,7 @@
     letterForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       updateSendButton();
-      if (sendButton.disabled) return;
+      if (sendButton.disabled || !supabaseClient) return;
 
       const formData = new FormData(letterForm);
       const letter = {
@@ -247,8 +266,11 @@
         updateSendButton();
         sendStatus.textContent = "Surat sudah terkirim dan masuk ke kotak surat.";
       } catch (error) {
-        sendButton.disabled = false;
-        sendStatus.textContent = "Surat gagal dikirim. Periksa koneksi atau konfigurasi Supabase.";
+        updateSendButton();
+        const errorDetail = error && typeof error.message === "string"
+          ? error.message
+          : "Kesalahan tidak diketahui.";
+        sendStatus.textContent = `Surat gagal dikirim: ${errorDetail}`;
         console.error("Gagal menyimpan surat:", error);
       }
     });
