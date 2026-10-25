@@ -123,8 +123,8 @@
     <p class="intro">Masuk dengan akun admin Kotak Surat</p>
     <form id="login-form">
       <div class="field">
-        <label for="email">Email</label>
-        <input id="email" name="email" type="email" placeholder="Masukkan email admin" autocomplete="username" required>
+        <label for="username">Username atau email</label>
+        <input id="username" name="username" type="text" placeholder="Masukkan username atau email admin" autocomplete="username" required>
       </div>
       <div class="field">
         <label for="password">Password</label>
@@ -138,31 +138,65 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
   <script>
-    const supabaseClient = window.supabase.createClient(
-      window.KOTAK_SURAT_SUPABASE_URL,
-      window.KOTAK_SURAT_SUPABASE_ANON_KEY
-    );
     const loginForm = document.getElementById("login-form");
     const loginButton = loginForm.querySelector("button");
     const status = document.getElementById("login-status");
+    let supabaseClient = null;
+
+    if (!window.supabase || typeof window.supabase.createClient !== "function") {
+      status.textContent = "Library Supabase gagal dimuat. Periksa koneksi internet.";
+    } else if (!window.KOTAK_SURAT_SUPABASE_URL ||
+               window.KOTAK_SURAT_SUPABASE_URL.includes("YOUR_PROJECT_ID") ||
+               !window.KOTAK_SURAT_SUPABASE_ANON_KEY ||
+               window.KOTAK_SURAT_SUPABASE_ANON_KEY.includes("YOUR_SUPABASE_PUBLISHABLE_KEY") ||
+               !window.KOTAK_SURAT_ADMIN_USERNAME ||
+               !window.KOTAK_SURAT_ADMIN_EMAIL ||
+               window.KOTAK_SURAT_ADMIN_EMAIL.includes("ISI_EMAIL_ADMIN_SUPABASE")) {
+      status.textContent = "Konfigurasi Supabase atau akun admin belum diisi di supabase-config.js.";
+    } else {
+      try {
+        supabaseClient = window.supabase.createClient(
+          window.KOTAK_SURAT_SUPABASE_URL,
+          window.KOTAK_SURAT_SUPABASE_ANON_KEY
+        );
+      } catch (error) {
+        status.textContent = "Konfigurasi Supabase tidak valid. Periksa supabase-config.js.";
+        console.error("Konfigurasi Supabase tidak valid:", error);
+      }
+    }
+
+    if (!supabaseClient) {
+      loginButton.disabled = true;
+    }
 
     loginForm.addEventListener("submit", async (event) => {
       event.preventDefault();
+      if (!supabaseClient) return;
 
       const formData = new FormData(event.currentTarget);
-      const email = formData.get("email").trim();
+      const loginIdentifier = formData.get("username").trim();
       const password = formData.get("password");
       loginButton.disabled = true;
       status.textContent = "Memeriksa akun...";
       try {
-        const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        const isUsername = loginIdentifier.toLowerCase() === window.KOTAK_SURAT_ADMIN_USERNAME.toLowerCase();
+        const isEmail = loginIdentifier.toLowerCase() === window.KOTAK_SURAT_ADMIN_EMAIL.toLowerCase();
+        if (!isUsername && !isEmail) {
+          throw new Error("Username atau password salah.");
+        }
+        const { error } = await supabaseClient.auth.signInWithPassword({
+          email: window.KOTAK_SURAT_ADMIN_EMAIL,
+          password
+        });
         if (error) throw error;
         window.location.href = "Admin.html";
       } catch (error) {
-        status.textContent = "Login gagal. Periksa email, password, dan konfigurasi Supabase.";
+        status.textContent = error.message === "Username atau password salah."
+          ? error.message
+          : "Login gagal. Periksa username dan password admin.";
         console.error("Gagal login admin:", error);
       } finally {
-        loginButton.disabled = false;
+        loginButton.disabled = !supabaseClient;
       }
     });
   </script>
